@@ -7,13 +7,13 @@ from pykt.preprocess.utils import (
     write_txt,
 )
 
-KEYS = ["student_id", "skill_id", "question_id"]
+KEYS = ["student_id", "skills", "question_id"]
 COLS = KEYS + ["submission_time", "correct", "response_time"]
 
 
 def read_data_from_csv(read_file, write_file):
     stares = []
-    df = pd.read_csv(read_file, low_memory=False, usecols=COLS + ["log_id"])
+    df = pd.read_csv(read_file, low_memory=False, usecols=COLS + ["id"])
 
     ins, us, qs, cs, avgins, avgcq, na = sta_infos(df, KEYS, stares)
     print(
@@ -33,8 +33,8 @@ def read_data_from_csv(read_file, write_file):
     )
     user_inters = []
     for user, group in df.groupby("student_id", sort=False):
-        group = group.sort_values(["submission_time", "log_id"])
-        seq_skills = group["skill_id"].tolist()
+        group = group.sort_values(["submission_time", "id"])
+        seq_skills = group["skills"].tolist()
         seq_ans = group["correct"].tolist()
         seq_response_cost = group["response_time"].tolist()
         seq_start_time = group["submission_time"].tolist()
@@ -46,8 +46,7 @@ def read_data_from_csv(read_file, write_file):
         user_inters.append(
             [
                 [str(user), str(seq_len)],
-                # format_list2str(seq_problems),
-                ["NA"],
+                format_list2str(seq_problems),
                 format_list2str(seq_skills),
                 format_list2str(seq_ans),
                 format_list2str(seq_start_time),
