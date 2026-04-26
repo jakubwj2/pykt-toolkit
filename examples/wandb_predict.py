@@ -18,7 +18,7 @@ def main(params):
     if params['use_wandb'] ==1:
         import wandb
         os.environ['WANDB_API_KEY'] = wandb_config["api_key"]
-        wandb.init(project="wandb_predict")
+        run = wandb.init(project="smart_tutor")
 
     save_dir, batch_size, fusion_type = params["save_dir"], params["bz"], params["fusion_type"].split(",")
 
@@ -123,6 +123,8 @@ def main(params):
 
     if params['use_wandb'] ==1:
         wandb.log(dres)
+        run.tags += (model_name, dataset_name.strip("smart_tutor"))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

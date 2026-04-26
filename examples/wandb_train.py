@@ -28,7 +28,7 @@ def main(params):
 
     if params['use_wandb']==1:
         import wandb
-        wandb.init()
+        run = wandb.init(project="smart_tutor")
 
     set_seed(params["seed"])
     model_name, dataset_name, fold, emb_type, save_dir = params["model_name"], params["dataset_name"], \
@@ -136,10 +136,10 @@ def main(params):
     debug_print(text = "train model",fuc_name="main")
     
     if model_name == "rkt":
-        testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = \
+        train_acc, train_auc, testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = \
             train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, None, None, save_model, data_config[dataset_name], fold)
     else:
-        testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, None, None, save_model)
+        train_acc, train_auc, testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, None, None, save_model)
     
     if save_model:
         best_model = init_model(model_name, model_config, data_config[dataset_name], emb_type)
@@ -152,5 +152,6 @@ def main(params):
     print(f"end:{datetime.datetime.now()}")
     
     if params['use_wandb']==1:
+        run.tags += (dataset_name.strip("smart_tutor_"), model_name)
         wandb.log({ 
-                    "validauc": validauc, "validacc": validacc, "best_epoch": best_epoch,"model_save_path":model_save_path})
+                    "trainauc": train_auc, "trainacc": train_acc, "validauc": validauc, "validacc": validacc, "best_epoch": best_epoch,"model_save_path":model_save_path, "tags": [dataset_name.strip("smart_tutor_"), model_name]})

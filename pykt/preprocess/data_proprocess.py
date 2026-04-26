@@ -31,7 +31,7 @@ def process_raw_data(dataset_name,dname2paths):
         from .ednet_preprocess import read_data_from_csv
     elif dataset_name == "peiyou":
         from .aaai2022_competition import read_data_from_csv, load_q2c
-    elif dataset_name == "smart_tutor":
+    elif dataset_name.startswith("smart_tutor"):
         from .smart_tutor_preprocess import read_data_from_csv
     
     if dataset_name == "junyi2015":

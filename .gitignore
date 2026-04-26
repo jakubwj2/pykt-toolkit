@@ -4,6 +4,7 @@ examples/all_start.sh
 examples/pkls/
 examples/pred_wandbs/
 examples/saved_model/
+examples/experiment_models/
 examples/start_predict.sh
 examples/wandb/
 dist/
@@ -24,7 +25,7 @@ data/poj
 data/slepemapy
 data/junyi2015
 data/ednet
-data/smart_tutor
+data/smart_tutor*
 .ipynb_checkpoints
 dev_tools
 tmp*
