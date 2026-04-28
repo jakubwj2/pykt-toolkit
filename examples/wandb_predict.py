@@ -123,7 +123,7 @@ def main(params):
 
     if params['use_wandb'] ==1:
         wandb.log(dres)
-        run.tags += (model_name, dataset_name.strip("smart_tutor"))
+        run.tags += (model_name, dataset_name.removeprefix("smart_tutor"))
 
 
 if __name__ == "__main__":
