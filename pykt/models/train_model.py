@@ -312,8 +312,10 @@ def train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, t
         
         if model.model_name=='rkt':
             auc, acc = evaluate(model, valid_loader, model.model_name, rel)
+            train_auc, train_acc = evaluate(model, train_loader, model.model_name, rel)
         else:
             auc, acc = evaluate(model, valid_loader, model.model_name)
+            train_auc, train_acc = evaluate(model, train_loader, model.model_name)
         ### atkt 有diff， 以下代码导致的
         ### auc, acc = round(auc, 4), round(acc, 4)
 
@@ -333,9 +335,9 @@ def train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, t
                     window_testauc, window_testacc = evaluate(model, test_window_loader, model.model_name, save_test_path)
             validauc, validacc = auc, acc
         print(f"Epoch: {i}, validauc: {validauc:.4}, validacc: {validacc:.4}, best epoch: {best_epoch}, best auc: {max_auc:.4}, train loss: {loss_mean}, emb_type: {model.emb_type}, model: {model.model_name}, save_dir: {ckpt_path}")
-        print(f"            testauc: {round(testauc,4)}, testacc: {round(testacc,4)}, window_testauc: {round(window_testauc,4)}, window_testacc: {round(window_testacc,4)}")
+        print(f"            trainauc: {train_auc:.4}, trainacc: {train_acc:.4} testauc: {round(testauc,4)}, testacc: {round(testacc,4)}, window_testauc: {round(window_testauc,4)}, window_testacc: {round(window_testacc,4)}")
 
 
         if i - best_epoch >= 10:
             break
-    return testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch
+    return train_acc, train_auc, testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch

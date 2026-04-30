@@ -19,8 +19,19 @@ dname2paths = {
     "ednet": "../data/ednet/",
     "ednet5w": "../data/ednet/",
     "peiyou": "../data/peiyou/grade3_students_b_200.csv",
-    "smart_tutor": "../data/smart_tutor/problem_logs.csv"
+    "smart_tutor": "../data/smart_tutor/problem_logs.csv",
 }
+
+
+for model in [
+    "llama3.2:latest",
+    "mistral",
+    "qwen3.5:latest",
+    "qwen2.5:latest",
+    "deepseek-r1:latest"
+]:
+    dname2paths["smart_tutor_" + model] = "../data/smart_tutor_" + model + "/problem_logs.csv"
+
 configf = "../configs/data_config.json"
 
 if __name__ == "__main__":

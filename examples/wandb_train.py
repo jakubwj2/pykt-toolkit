@@ -1,16 +1,16 @@
-import os
-import argparse
 import json
+import os
 
 import torch
-torch.set_num_threads(4) 
-from torch.optim import SGD, Adam
-import copy
 
-from pykt.models import train_model,evaluate,init_model
-from pykt.utils import debug_print,set_seed
-from pykt.datasets import init_dataset4train
+torch.set_num_threads(4) 
+import copy
 import datetime
+
+from pykt.datasets import init_dataset4train
+from pykt.models import init_model, train_model
+from pykt.utils import debug_print, set_seed
+from torch.optim import SGD, Adam
 
 os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 device = "cpu" if not torch.cuda.is_available() else "cuda"
@@ -28,7 +28,7 @@ def main(params):
 
     if params['use_wandb']==1:
         import wandb
-        wandb.init()
+        run = wandb.init(project="smart_tutor")
 
     set_seed(params["seed"])
     model_name, dataset_name, fold, emb_type, save_dir = params["model_name"], params["dataset_name"], \
@@ -75,7 +75,7 @@ def main(params):
         diff_level = params["difficult_levels"]
         train_loader, valid_loader, *_ = init_dataset4train(dataset_name, model_name, data_config, fold, batch_size, diff_level=diff_level)
 
-    params_str = "_".join([str(v) for k,v in params.items() if not k in ['other_config']])
+    params_str = "_".join([str(v) for k,v in params.items() if k not in ['other_config']])
 
     print(f"params: {params}, params_str: {params_str}")
     if params['add_uuid'] == 1 and params["use_wandb"] == 1:
@@ -117,7 +117,7 @@ def main(params):
     elif model_name == "iekt":
         opt = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-6)
     elif model_name == "dtransformer":
-        print(f"dtransformer weight_decay = 1e-5")
+        print("dtransformer weight_decay = 1e-5")
         opt = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
     elif model_name == "dimkt":
         opt = torch.optim.Adam(model.parameters(),lr=learning_rate,weight_decay=params['weight_decay'])
@@ -136,10 +136,10 @@ def main(params):
     debug_print(text = "train model",fuc_name="main")
     
     if model_name == "rkt":
-        testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = \
+        train_acc, train_auc, testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = \
             train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, None, None, save_model, data_config[dataset_name], fold)
     else:
-        testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, None, None, save_model)
+        train_acc, train_auc, testauc, testacc, window_testauc, window_testacc, validauc, validacc, best_epoch = train_model(model, train_loader, valid_loader, num_epochs, opt, ckpt_path, None, None, save_model)
     
     if save_model:
         best_model = init_model(model_name, model_config, data_config[dataset_name], emb_type)
@@ -152,5 +152,6 @@ def main(params):
     print(f"end:{datetime.datetime.now()}")
     
     if params['use_wandb']==1:
+        run.tags += (dataset_name.removeprefix("smart_tutor_"), model_name)
         wandb.log({ 
-                    "validauc": validauc, "validacc": validacc, "best_epoch": best_epoch,"model_save_path":model_save_path})
+                    "trainauc": train_auc, "trainacc": train_acc, "validauc": validauc, "validacc": validacc, "best_epoch": best_epoch,"model_save_path":model_save_path})
