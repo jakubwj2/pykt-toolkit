@@ -4,7 +4,7 @@ examples/all_start.sh
 examples/pkls/
 examples/pred_wandbs/
 examples/saved_model/
-examples/experiment_models/
+examples/experiment_models*/
 examples/start_predict.sh
 examples/wandb/
 dist/

@@ -155,3 +155,11 @@ def main(params):
         run.tags += (dataset_name.removeprefix("smart_tutor_"), model_name)
         wandb.log({ 
                     "trainauc": train_auc, "trainacc": train_acc, "validauc": validauc, "validacc": validacc, "best_epoch": best_epoch,"model_save_path":model_save_path})
+
+    log_path ="../experiment_log.csv"
+
+    if os.path.exists(log_path):
+        with open(log_path, "w") as fout:
+            print("dataset_name", "model_name", "trainauc", "trainacc", "validauc", "validacc", "testauc", "testacc", file=fout, sep=",")
+    with open(log_path, "a") as fout:
+        print(dataset_name.removeprefix("smart_tutor_"), model_name, train_auc, train_acc,  validauc, validacc, "", "", file=fout, sep=",")

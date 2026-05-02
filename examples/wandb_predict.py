@@ -97,7 +97,7 @@ def main(params):
 
     q_testaucs, q_testaccs = -1,-1
     qw_testaucs, qw_testaccs = -1,-1
-    if "test_question_file" in data_config and not test_question_loader is None:
+    if "test_question_file" in data_config and test_question_loader is not None:
         save_test_question_path = os.path.join(save_dir, model.emb_type+"_test_question_predictions.txt")
         q_testaucs, q_testaccs = evaluate_question(model, test_question_loader, model_name, fusion_type, save_test_question_path)
         for key in q_testaucs:
@@ -105,7 +105,7 @@ def main(params):
         for key in q_testaccs:
             dres["oriacc"+key] = q_testaccs[key]
             
-    if "test_question_window_file" in data_config and not test_question_window_loader is None:
+    if "test_question_window_file" in data_config and test_question_window_loader is not None:
         save_test_question_window_path = os.path.join(save_dir, model.emb_type+"_test_question_window_predictions.txt")
         qw_testaucs, qw_testaccs = evaluate_question(model, test_question_window_loader, model_name, fusion_type, save_test_question_window_path)
         for key in qw_testaucs:
@@ -124,8 +124,24 @@ def main(params):
     if params['use_wandb'] ==1:
         wandb.log(dres)
         run.tags += (model_name, dataset_name.removeprefix("smart_tutor"))
+ 
 
+    log_path ="../experiment_log.csv"
+    log_df = pd.read_csv(log_path)
+    dataset_name = dataset_name.removeprefix("smart_tutor_")
 
+    testauc = dres["testauc"]
+    testacc = dres["testacc"]
+    mask = (
+    (log_df["model_name"] == model_name) &
+    (log_df["dataset_name"] == dataset_name)
+    )
+
+    log_df.loc[mask, "testauc"] = testauc
+    log_df.loc[mask, "testacc"] = testacc
+    log_df.to_csv(log_path, index=False)
+
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--bz", type=int, default=256)
