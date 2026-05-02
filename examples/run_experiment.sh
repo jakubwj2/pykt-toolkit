@@ -18,7 +18,7 @@ for model_name in "${model_names[@]}"; do
         
         if [[ -z "$FILE" ]]; then
             echo "Running $model_name on $dataset_name"
-            python "wandb_"$model_name"_train.py" --dataset_name=$dataset_name --save_dir="experiment_models"
+            python "wandb_"$model_name"_train.py" --dataset_name=$dataset_name --save_dir="experiment_models" --use_wandb=0
         else
             echo "$model_name ($dataset_name) already exists, skipping training"
             continue
@@ -38,6 +38,6 @@ for model_name in "${model_names[@]}"; do
             exit 1
         fi
 
-        python "wandb_predict.py" --save_dir=$FILE
+        python "wandb_predict.py" --save_dir=$FILE --use_wandb=0 --bz=64
     done
 done
