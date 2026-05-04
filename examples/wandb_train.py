@@ -158,7 +158,7 @@ def main(params):
 
     log_path ="../experiment_log.csv"
 
-    if os.path.exists(log_path):
+    if not os.path.exists(log_path):
         with open(log_path, "w") as fout:
             print("dataset_name", "model_name", "trainauc", "trainacc", "validauc", "validacc", "testauc", "testacc", file=fout, sep=",")
     with open(log_path, "a") as fout:

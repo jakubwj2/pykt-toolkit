@@ -3,7 +3,7 @@
 export WANDB_API_KEY=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
 
 model_names=("dkt" "sakt" "akt" "simplekt" "dtransformer")
-dataset_names=("llama3.2:latest" "mistral" "qwen3.5:latest" "qwen2.5:latest" "deepseek-r1:latest" "assist2009")
+dataset_names=("llama3.2:latest" "mistral" "qwen3.5:latest" "qwen2.5:latest" "deepseek-r1:latest")
 
 
 for model_name in "${model_names[@]}"; do
