@@ -25,10 +25,10 @@ dname2paths = {
 
 for model in [
     "llama3.2:latest",
-    "mistral",
-    "qwen3.5:latest",
+    "mistral:latest",
+    "gemma3:1b",
     "qwen2.5:latest",
-    "deepseek-r1:latest"
+    "deepseek-r1:1.5b"
 ]:
     dname2paths["smart_tutor_" + model] = "../data/smart_tutor_" + model + "/problem_logs.csv"
 
